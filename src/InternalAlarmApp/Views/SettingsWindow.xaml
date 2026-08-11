@@ -1,0 +1,24 @@
+<Window x:Class="InternalAlarmApp.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="설정" Width="500" Height="380" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <Grid Margin="24">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="170"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="환경 설정" FontSize="23" FontWeight="Bold" Foreground="#1558A6" Margin="0,0,0,20"/>
+        <TextBlock Grid.Row="1" Text="단축키 (빠르게 두 번)" VerticalAlignment="Center"/>
+        <ComboBox Grid.Row="1" Grid.Column="1" x:Name="HotKeyBox">
+            <ComboBoxItem Content="Scroll Lock" Tag="145"/><ComboBoxItem Content="Pause/Break" Tag="19"/>
+            <ComboBoxItem Content="F8" Tag="119"/><ComboBoxItem Content="F9" Tag="120"/>
+        </ComboBox>
+        <TextBlock Grid.Row="2" Text="두 번 입력 인정 시간" VerticalAlignment="Center" Margin="0,15,0,0"/>
+        <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,15,0,0">
+            <TextBox x:Name="IntervalBox" Width="100"/><TextBlock Text="ms (200~2000)" VerticalAlignment="Center" Margin="8,0"/>
+        </StackPanel>
+        <CheckBox Grid.Row="3" Grid.ColumnSpan="2" x:Name="StartupBox" Content="Windows 로그인 시 자동 실행" Margin="0,20,0,7"/>
+        <CheckBox Grid.Row="4" Grid.ColumnSpan="2" x:Name="KeepPopupBox" Content="확인할 때까지 자체 팝업 유지" VerticalAlignment="Top"/>
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="취소" Width="90" IsCancel="True"/><Button Content="저장" Width="100" IsDefault="True" Click="Save_Click" Background="#1558A6" Foreground="White"/>
+        </StackPanel>
+    </Grid>
+</Window>

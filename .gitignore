@@ -1,0 +1,10 @@
+bin/
+obj/
+artifacts/
+.dotnet-sdk/
+.dotnet-home/
+.nuget-local/
+.appdata/
+dotnet-sdk-*.zip
+.vs/
+*.user
