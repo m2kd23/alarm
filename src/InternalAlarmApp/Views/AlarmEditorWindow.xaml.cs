@@ -5,6 +5,8 @@ using InternalAlarmApp.DateTimeParser;
 using InternalAlarmApp.Models;
 using InternalAlarmApp.Services.AlarmService;
 using InternalAlarmApp.Services.DataService;
+using InternalAlarmApp.Services;
+using InternalAlarmApp.Services.FileOpenService;
 using Microsoft.Win32;
 using Forms = System.Windows.Forms;
 
@@ -16,7 +18,7 @@ public partial class AlarmEditorWindow : Window
     private readonly AlarmScheduler _scheduler;
     private readonly Alarm _alarm;
 
-    public AlarmEditorWindow(AlarmRepository repository, AlarmScheduler scheduler, KoreanDateTimeParser parser, string originalText = "", Alarm? existing = null)
+    public AlarmEditorWindow(AlarmRepository repository, AlarmScheduler scheduler, KoreanDateTimeParser parser, string originalText = "", string initialTarget = "", string contextTitle = "", Alarm? existing = null)
     {
         InitializeComponent();
         _repository = repository; _scheduler = scheduler;
@@ -27,9 +29,10 @@ public partial class AlarmEditorWindow : Window
         {
             OriginalTextBox.Text = originalText;
             var parsed = parser.Parse(originalText, DateTime.Now);
-            TitleBox.Text = parsed.SuggestedTitle;
+            TitleBox.Text = parsed.SuggestedTitle == "업무 알림" && !string.IsNullOrWhiteSpace(contextTitle) ? contextTitle : parsed.SuggestedTitle;
             DateBox.SelectedDate = parsed.HasDate ? parsed.Date : null;
             TimeBox.Text = parsed.HasTime ? parsed.Time!.Value.ToString(@"hh\:mm") : "";
+            PathBox.Text = initialTarget;
         }
     }
 
@@ -66,10 +69,10 @@ public partial class AlarmEditorWindow : Window
         }
 
         var path = PathBox.Text.Trim();
-        if (path.Length > 0 && !File.Exists(path) && !Directory.Exists(path))
+        if (path.Length > 0 && !FileOpenService.IsSupportedTarget(path))
         {
-            var answer = MessageBox.Show(this, "입력한 파일 또는 폴더가 현재 존재하지 않습니다. 경로를 그대로 저장할까요?", "경로 확인", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (answer != MessageBoxResult.Yes) return;
+            MessageBox.Show(this, "지원되는 문서·이미지·HTML 파일, 폴더 또는 http/https 웹 주소를 입력해 주세요.", "경로 확인", MessageBoxButton.OK, MessageBoxImage.Warning);
+            PathBox.Focus(); return;
         }
 
         _alarm.Title = TitleBox.Text.Trim(); _alarm.OriginalText = OriginalTextBox.Text.Trim(); _alarm.AlarmDateTime = when;

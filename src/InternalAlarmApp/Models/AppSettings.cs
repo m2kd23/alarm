@@ -4,8 +4,11 @@ namespace InternalAlarmApp.Models;
 
 public sealed class AppSettings
 {
-    public int HotKeyVirtualKey { get; set; } = 0x91; // Scroll Lock
-    public string HotKeyName { get; set; } = "Scroll Lock";
+    public int SettingsVersion { get; set; } = 3;
+    public int HotKeyVirtualKey { get; set; } = 0x14; // Caps Lock
+    public string HotKeyName { get; set; } = "Ctrl + Caps Lock";
+    public int HotKeyModifiers { get; set; } = 1; // Ctrl
+    public int HotKeyPressCount { get; set; } = 1;
     public int DoublePressMilliseconds { get; set; } = 500;
     public bool RunAtStartup { get; set; }
     public bool KeepPopupVisible { get; set; } = true;
@@ -14,9 +17,21 @@ public sealed class AppSettings
     {
         try
         {
-            return File.Exists(path)
-                ? JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(path)) ?? new()
-                : new();
+            if (!File.Exists(path)) return new();
+            var json = File.ReadAllText(path);
+            var settings = JsonSerializer.Deserialize<AppSettings>(json) ?? new();
+            using var document = JsonDocument.Parse(json);
+            var isLegacy = !document.RootElement.TryGetProperty(nameof(SettingsVersion), out var version)
+                || version.GetInt32() < 3;
+            if (isLegacy)
+            {
+                settings.SettingsVersion = 3;
+                settings.HotKeyVirtualKey = 0x14;
+                settings.HotKeyName = "Ctrl + Caps Lock";
+                settings.HotKeyModifiers = 1;
+                settings.HotKeyPressCount = 1;
+            }
+            return settings;
         }
         catch { return new(); }
     }

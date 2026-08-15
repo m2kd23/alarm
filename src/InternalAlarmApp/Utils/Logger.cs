@@ -5,7 +5,11 @@ public static class Logger
     private static readonly object Gate = new();
 
     public static void Info(string message) => Write("INFO", message);
-    public static void Error(string area, Exception ex) => Write("ERROR", $"{area}: {ex.GetType().Name}: {ex.Message}");
+    public static void Error(string area, Exception ex)
+    {
+        var root = ex.GetBaseException();
+        Write("ERROR", $"{area}: {root.GetType().Name}: {root.Message}");
+    }
 
     private static void Write(string level, string message)
     {

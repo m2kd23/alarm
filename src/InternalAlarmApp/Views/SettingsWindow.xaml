@@ -6,12 +6,14 @@
         <Grid.ColumnDefinitions><ColumnDefinition Width="170"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="환경 설정" FontSize="23" FontWeight="Bold" Foreground="#1558A6" Margin="0,0,0,20"/>
-        <TextBlock Grid.Row="1" Text="단축키 (빠르게 두 번)" VerticalAlignment="Center"/>
+        <TextBlock Grid.Row="1" Text="업무 등록 단축키" VerticalAlignment="Center"/>
         <ComboBox Grid.Row="1" Grid.Column="1" x:Name="HotKeyBox">
-            <ComboBoxItem Content="Scroll Lock" Tag="145"/><ComboBoxItem Content="Pause/Break" Tag="19"/>
-            <ComboBoxItem Content="F8" Tag="119"/><ComboBoxItem Content="F9" Tag="120"/>
+            <ComboBoxItem Content="Ctrl + Caps Lock (권장, 한 번)" Tag="20|1|1"/>
+            <ComboBoxItem Content="Ctrl + Alt + F12 (한 번)" Tag="123|3|1"/>
+            <ComboBoxItem Content="Scroll Lock (두 번)" Tag="145|0|2"/><ComboBoxItem Content="Pause/Break (두 번)" Tag="19|0|2"/>
+            <ComboBoxItem Content="F8 (두 번)" Tag="119|0|2"/><ComboBoxItem Content="F9 (두 번)" Tag="120|0|2"/>
         </ComboBox>
-        <TextBlock Grid.Row="2" Text="두 번 입력 인정 시간" VerticalAlignment="Center" Margin="0,15,0,0"/>
+        <TextBlock Grid.Row="2" Text="두 번 입력 인정 시간" VerticalAlignment="Center" Margin="0,15,0,0" ToolTip="두 번 방식의 단축키에만 적용"/>
         <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,15,0,0">
             <TextBox x:Name="IntervalBox" Width="100"/><TextBlock Text="ms (200~2000)" VerticalAlignment="Center" Margin="8,0"/>
         </StackPanel>

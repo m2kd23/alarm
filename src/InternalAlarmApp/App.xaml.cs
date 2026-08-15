@@ -26,6 +26,7 @@ public partial class App : Application
     private readonly KoreanDateTimeParser _parser = new();
     private readonly SelectionTextService _selection = new();
     private readonly FileOpenService _fileOpen = new();
+    private readonly ActiveContextService _activeContext = new();
     private readonly Dictionary<long, NotificationPopup> _openPopups = [];
     private bool _capturing;
     private bool _exiting;
@@ -44,6 +45,7 @@ public partial class App : Application
         {
             AppPaths.EnsureCreated();
             _settings = AppSettings.Load(AppPaths.Settings);
+            _settings.Save(AppPaths.Settings);
             _repository = new AlarmRepository(AppPaths.Database);
             _repository.Initialize();
             _scheduler = new AlarmScheduler(_repository);
@@ -52,13 +54,12 @@ public partial class App : Application
             _mainWindow = new MainWindow(_repository, _scheduler, _parser, _fileOpen);
             MainWindow = _mainWindow;
             WireTray();
-            _hotKey = new GlobalKeySequenceService(_settings.HotKeyVirtualKey, _settings.DoublePressMilliseconds);
+            _hotKey = new GlobalKeySequenceService(_settings.HotKeyVirtualKey, _settings.DoublePressMilliseconds, _settings.HotKeyModifiers, _settings.HotKeyPressCount);
             _hotKey.Triggered += (_, _) => Dispatcher.BeginInvoke(CaptureSelectionAndOpenEditor);
             _hotKey.Start();
             _scheduler.Start();
             Logger.Info("프로그램 시작");
             _mainWindow.ShowAndActivate();
-            _tray.ShowStartupMessage();
         }
         catch (Exception ex)
         {
@@ -74,8 +75,11 @@ public partial class App : Application
         _capturing = true;
         try
         {
+            var source = _activeContext.CaptureSource();
+            await Task.Delay(180);
             var text = await _selection.GetSelectedTextAsync();
-            _mainWindow.OpenEditor(text);
+            var activeTarget = _activeContext.ResolveTarget(source);
+            _mainWindow.OpenEditor(text, activeTarget.Target, activeTarget.SuggestedTitle);
         }
         catch (Exception ex)
         {
@@ -89,7 +93,6 @@ public partial class App : Application
     private void Scheduler_AlarmDue(object? sender, AlarmDueEventArgs e) => Dispatcher.BeginInvoke(() =>
     {
         if (_repository is null || _scheduler is null || _tray is null) return;
-        _tray.ShowNativeNotification(e.Alarm, e.Reminder);
         if (_openPopups.Remove(e.Alarm.Id, out var previous)) previous.Close();
         var popup = new NotificationPopup(e.Alarm, _repository, _scheduler, _fileOpen, _settings.KeepPopupVisible);
         _openPopups[e.Alarm.Id] = popup;
@@ -118,7 +121,7 @@ public partial class App : Application
         {
             StartupService.SetEnabled(_settings.RunAtStartup);
             _settings.Save(AppPaths.Settings);
-            _hotKey?.Update(_settings.HotKeyVirtualKey, _settings.DoublePressMilliseconds);
+            _hotKey?.Update(_settings.HotKeyVirtualKey, _settings.DoublePressMilliseconds, _settings.HotKeyModifiers, _settings.HotKeyPressCount);
         }
         catch (Exception ex)
         {

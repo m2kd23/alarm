@@ -27,7 +27,15 @@ public sealed class Alarm
     public string ReminderSummary => ReminderMinutes.Count == 0
         ? "정시"
         : string.Join(", ", ReminderMinutes.OrderDescending().Select(x => x >= 1440 ? $"{x / 1440}일 전" : x >= 60 ? $"{x / 60}시간 전" : $"{x}분 전"));
-    public string FileName => string.IsNullOrWhiteSpace(FilePath) ? "" : Path.GetFileName(FilePath.TrimEnd(Path.DirectorySeparatorChar));
+    public string FileName
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(FilePath)) return "";
+            if (Uri.TryCreate(FilePath, UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https") return uri.Host;
+            return Path.GetFileName(FilePath.TrimEnd(Path.DirectorySeparatorChar));
+        }
+    }
 }
 
 public enum AlarmStatus { Scheduled, Triggered, Completed, Cancelled }

@@ -5,6 +5,8 @@ artifacts/
 .dotnet-home/
 .nuget-local/
 .appdata/
+.tmp-*/
+scratch/
 dotnet-sdk-*.zip
 .vs/
 *.user

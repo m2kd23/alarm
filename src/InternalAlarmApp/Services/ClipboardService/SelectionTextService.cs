@@ -2,6 +2,8 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Threading;
+using InternalAlarmApp.Utils;
+using Forms = System.Windows.Forms;
 
 namespace InternalAlarmApp.Services.ClipboardService;
 
@@ -10,8 +12,16 @@ public sealed class SelectionTextService
     public async Task<string> GetSelectedTextAsync()
     {
         var automationText = TryReadThroughAutomation();
-        if (!string.IsNullOrWhiteSpace(automationText)) return automationText.Trim();
-        return (await CopyWithoutChangingClipboardAsync()).Trim();
+        if (!string.IsNullOrWhiteSpace(automationText))
+        {
+            Logger.Info($"선택 텍스트 수집 성공(UI Automation, {automationText.Length}자)");
+            return automationText.Trim();
+        }
+        var clipboardText = (await CopyWithoutChangingClipboardAsync()).Trim();
+        Logger.Info(clipboardText.Length > 0
+            ? $"선택 텍스트 수집 성공(Clipboard, {clipboardText.Length}자)"
+            : "선택 텍스트 수집 실패(UI Automation/Clipboard 모두 빈 값)");
+        return clipboardText;
     }
 
     private static string TryReadThroughAutomation()
@@ -33,15 +43,21 @@ public sealed class SelectionTextService
         try
         {
             TryClearClipboard();
-            SendCopy();
-            for (var i = 0; i < 10; i++)
+            for (var attempt = 0; attempt < 2; attempt++)
             {
-                await Task.Delay(35);
-                try
+                var sent = attempt == 0 ? SendCopyWithNativeInput() : SendCopyWithSendKeys();
+                Logger.Info($"Clipboard 복사 시도 {attempt + 1}: 입력 전송={(sent ? "성공" : "실패")}");
+                for (var i = 0; i < 24; i++)
                 {
-                    if (Clipboard.ContainsText()) return Clipboard.GetText();
+                    await Task.Delay(50);
+                    try
+                    {
+                        var text = TryGetClipboardText();
+                        if (!string.IsNullOrWhiteSpace(text)) return text;
+                    }
+                    catch (COMException) { }
                 }
-                catch (COMException) { }
+                await Task.Delay(100);
             }
             return "";
         }
@@ -49,10 +65,23 @@ public sealed class SelectionTextService
         {
             if (backup != null)
             {
-                await Task.Delay(20);
+                await Task.Delay(40);
                 TrySetClipboard(backup);
             }
+            else TryClearClipboard();
         }
+    }
+
+    private static string TryGetClipboardText()
+    {
+        var data = Clipboard.GetDataObject();
+        if (data is null) return "";
+        foreach (var format in new[] { DataFormats.UnicodeText, DataFormats.Text, DataFormats.OemText })
+        {
+            if (!data.GetDataPresent(format, false)) continue;
+            if (data.GetData(format, false) is string text && !string.IsNullOrWhiteSpace(text)) return text;
+        }
+        return Clipboard.ContainsText() ? Clipboard.GetText() : "";
     }
 
     private static DataObject? TrySnapshotClipboard()
@@ -86,7 +115,7 @@ public sealed class SelectionTextService
         }
     }
 
-    private static void SendCopy()
+    private static bool SendCopyWithNativeInput()
     {
         var inputs = new[]
         {
@@ -95,11 +124,20 @@ public sealed class SelectionTextService
             new Input { Type = 1, Data = new InputUnion { Keyboard = new KeyboardInput { VirtualKey = 0x43, Flags = 2 } } },
             new Input { Type = 1, Data = new InputUnion { Keyboard = new KeyboardInput { VirtualKey = 0x11, Flags = 2 } } }
         };
-        Native.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<Input>());
+        return Native.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<Input>()) == inputs.Length;
+    }
+
+    private static bool SendCopyWithSendKeys()
+    {
+        try { Forms.SendKeys.SendWait("^c"); return true; }
+        catch { return false; }
     }
 
     [StructLayout(LayoutKind.Sequential)] private struct Input { public uint Type; public InputUnion Data; }
     [StructLayout(LayoutKind.Explicit)] private struct InputUnion { [FieldOffset(0)] public KeyboardInput Keyboard; }
     [StructLayout(LayoutKind.Sequential)] private struct KeyboardInput { public ushort VirtualKey; public ushort ScanCode; public uint Flags; public uint Time; public IntPtr ExtraInfo; }
-    private static class Native { [DllImport("user32.dll", SetLastError = true)] internal static extern uint SendInput(uint count, Input[] inputs, int size); }
+    private static class Native
+    {
+        [DllImport("user32.dll", SetLastError = true)] internal static extern uint SendInput(uint count, Input[] inputs, int size);
+    }
 }

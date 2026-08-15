@@ -34,9 +34,9 @@ public partial class MainWindow : Window
         Show(); WindowState = WindowState.Normal; Activate();
     }
 
-    public void OpenEditor(string originalText = "", Alarm? alarm = null)
+    public void OpenEditor(string originalText = "", string initialTarget = "", string contextTitle = "", Alarm? alarm = null)
     {
-        var editor = new AlarmEditorWindow(_repository, _scheduler, _parser, originalText, alarm) { Owner = IsVisible ? this : null };
+        var editor = new AlarmEditorWindow(_repository, _scheduler, _parser, originalText, initialTarget, contextTitle, alarm) { Owner = IsVisible ? this : null };
         if (editor.ShowDialog() == true) _viewModel.Reload();
     }
 

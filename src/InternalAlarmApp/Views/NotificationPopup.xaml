@@ -5,20 +5,28 @@
         ShowInTaskbar="False" Topmost="True" WindowStartupLocation="Manual">
     <Border BorderBrush="#1558A6" BorderThickness="2" Background="White" Padding="20">
         <StackPanel>
-            <TextBlock Text="내 업무 알림" Foreground="#1558A6" FontSize="19" FontWeight="Bold" />
-            <TextBlock x:Name="TitleText" Margin="0,14,0,5" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" />
+            <TextBlock x:Name="TitleText" Margin="0,2,0,5" FontSize="18" FontWeight="SemiBold" TextWrapping="Wrap" />
             <TextBlock x:Name="TimeText" Foreground="#555" />
             <TextBlock x:Name="DescriptionText" Margin="0,10,0,0" TextWrapping="Wrap" MaxHeight="90" />
             <Separator Margin="0,15,0,10" />
-            <WrapPanel HorizontalAlignment="Right">
-                <Button x:Name="OpenButton" Content="파일/폴더 열기" Click="Open_Click" />
-                <ComboBox x:Name="SnoozeMinutes" Width="105" SelectedIndex="1" Margin="5,3">
-                    <ComboBoxItem Content="5분" Tag="5"/><ComboBoxItem Content="10분" Tag="10"/>
-                    <ComboBoxItem Content="30분" Tag="30"/><ComboBoxItem Content="1시간" Tag="60"/>
-                </ComboBox>
-                <Button Content="다시 알림" Click="Snooze_Click" />
-                <Button Content="확인" Click="Confirm_Click" Background="#1558A6" Foreground="White" FontWeight="Bold" />
-            </WrapPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Button Grid.Row="0" x:Name="OpenButton" Content="파일/폴더/웹 열기" Click="Open_Click"
+                        HorizontalAlignment="Left" Margin="0,0,0,6" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <ComboBox x:Name="SnoozeMinutes" Width="82" SelectedIndex="1" Margin="3"
+                              HorizontalContentAlignment="Center">
+                        <ComboBoxItem Content="5분" Tag="5"/><ComboBoxItem Content="10분" Tag="10"/>
+                        <ComboBoxItem Content="30분" Tag="30"/><ComboBoxItem Content="1시간" Tag="60"/>
+                    </ComboBox>
+                    <Button Content="다시 알림" Width="92" Click="Snooze_Click" />
+                    <Button Content="확인" Width="72" Click="Confirm_Click"
+                            Background="#1558A6" Foreground="White" FontWeight="Bold" />
+                </StackPanel>
+            </Grid>
         </StackPanel>
     </Border>
 </Window>
