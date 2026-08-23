@@ -24,11 +24,36 @@ public sealed class TrayService : IDisposable
         _icon = new Forms.NotifyIcon
         {
             Text = "내 업무 알림",
-            Icon = Drawing.SystemIcons.Information,
+            Icon = LoadAppIcon(),
             Visible = true,
             ContextMenuStrip = menu
         };
         _icon.DoubleClick += (_, _) => ListRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    private static Drawing.Icon LoadAppIcon()
+    {
+        try
+        {
+            var asm = System.Reflection.Assembly.GetExecutingAssembly();
+            using var stream = asm.GetManifestResourceStream("InternalAlarmApp.app_icon.ico");
+            if (stream != null)
+            {
+                return new Drawing.Icon(stream);
+            }
+
+            var exePath = Environment.ProcessPath;
+            if (!string.IsNullOrEmpty(exePath) && System.IO.File.Exists(exePath))
+            {
+                var exeIcon = Drawing.Icon.ExtractAssociatedIcon(exePath);
+                if (exeIcon != null) return exeIcon;
+            }
+        }
+        catch
+        {
+            // fallback
+        }
+        return Drawing.SystemIcons.Information;
     }
 
     public void Dispose()

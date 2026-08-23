@@ -1,7 +1,9 @@
 <Window x:Class="InternalAlarmApp.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="설정" Width="500" Height="380" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+        Title="설정" Width="500" Height="380" ResizeMode="NoResize"
+        Icon="../app_icon.png"
+        WindowStartupLocation="CenterOwner">
     <Grid Margin="24">
         <Grid.ColumnDefinitions><ColumnDefinition Width="170"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
