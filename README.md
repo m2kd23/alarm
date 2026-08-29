@@ -104,6 +104,9 @@ AI 교육계획 보고
 | **완료 관리** | 처리한 업무는 완료 상태로 변경 |
 | **수정·삭제** | 등록된 기억할 일의 일정·내용·링크 수정 및 삭제 |
 | **로컬 저장** | 업무 데이터는 사용자 PC 내부에 저장하는 것을 기본 원칙으로 함 |
+| **모닝 브리핑 · 데일리 랩업** | 오늘 일정 카드와 완료 현황·미완료 일정 연기를 제공 |
+| **여러 연결 대상** | 업무별 파일·공유 폴더·내부 URL을 최대 20개까지 연결하고 일괄 열기 |
+| **CSV 교환** | UTF-8 CSV로 주간 업무 목록을 미리보기 후 가져오거나 내보내기 |
 
 ---
 
@@ -285,6 +288,35 @@ Alarm은 복잡한 일정관리 시스템을 만드는 것이 목적이 아닙�
       ↓
 클릭해서 자료 열고 바로 처리
 ```
+
+---
+
+## 개발 환경
+
+| 항목 | 내용 |
+|---|---|
+| 운영체제 | Windows 10/11 x64 |
+| 프레임워크 | .NET 8 (`net8.0-windows`) |
+| UI | WPF + Windows Forms 시스템 트레이 |
+| 언어 | C# (Nullable 사용) |
+| 로컬 저장소 | Windows 기본 `winsqlite3.dll` (SQLite) |
+| 개발 도구 | .NET 8 SDK, Visual Studio 2022 또는 VS Code |
+
+### 개발·검증 명령
+
+```powershell
+dotnet restore .\InternalAlarmApp.sln --ignore-failed-sources
+dotnet build .\InternalAlarmApp.sln -c Release --no-restore
+dotnet run --project .\Tests\InternalAlarmApp.Tests.csproj -c Release --no-build
+```
+
+단일 실행 파일과 배포 ZIP은 저장소 루트에서 다음 명령으로 생성합니다.
+
+```powershell
+.\build_portable.ps1
+```
+
+자세한 배포 절차는 [배포 가이드](docs/DEPLOYMENT.md)를 참고하세요.
 
 ---
 
