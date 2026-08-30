@@ -1,9 +1,8 @@
 <Window x:Class="InternalAlarmApp.Views.AlarmEditorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="업무 알림 등록" Width="640" Height="760" MinWidth="570" MinHeight="650"
-        Icon="../app_icon.png"
-        WindowStartupLocation="CenterOwner">
+        Title="업무 알림 등록" Width="700" Height="870" MinWidth="610" MinHeight="680"
+        Icon="../app_icon.png" WindowStartupLocation="CenterOwner">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="22">
             <Grid.ColumnDefinitions><ColumnDefinition Width="135"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
@@ -14,65 +13,65 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="업무 알림 등록" FontSize="24" FontWeight="Bold" Foreground="#1558A6" Margin="0,0,0,18"/>
-
             <TextBlock Grid.Row="1" Text="원문" VerticalAlignment="Top" Margin="0,8"/>
             <TextBox Grid.Row="1" Grid.Column="1" x:Name="OriginalTextBox" IsReadOnly="True" TextWrapping="Wrap" MinHeight="65" Background="#EEF1F5"/>
-
             <TextBlock Grid.Row="2" Text="제목 *" VerticalAlignment="Center" Margin="0,8"/>
             <TextBox Grid.Row="2" Grid.Column="1" x:Name="TitleBox" Margin="0,5" MaxLength="200"/>
-
             <TextBlock Grid.Row="3" Text="날짜 · 시간 *" VerticalAlignment="Center" Margin="0,8"/>
             <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,5">
                 <DatePicker x:Name="DateBox" Width="180" Height="34"/>
                 <TextBox x:Name="TimeBox" Width="90" Margin="8,0,0,0" ToolTip="HH:mm 형식"/>
                 <TextBlock Text="(HH:mm)" Foreground="#666" VerticalAlignment="Center" Margin="8,0"/>
             </StackPanel>
-
             <TextBlock Grid.Row="4" Text="사전 알림" VerticalAlignment="Top" Margin="0,10"/>
             <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,5">
                 <WrapPanel>
-                    <CheckBox x:Name="R5" Content="5분 전" Tag="5" Margin="0,7,16,7"/>
-                    <CheckBox x:Name="R10" Content="10분 전" Tag="10" Margin="0,7,16,7"/>
-                    <CheckBox x:Name="R30" Content="30분 전" Tag="30" Margin="0,7,16,7"/>
-                    <CheckBox x:Name="R60" Content="1시간 전" Tag="60" Margin="0,7,16,7"/>
+                    <CheckBox x:Name="R5" Content="5분 전" Tag="5" Margin="0,7,16,7"/><CheckBox x:Name="R10" Content="10분 전" Tag="10" Margin="0,7,16,7"/>
+                    <CheckBox x:Name="R30" Content="30분 전" Tag="30" Margin="0,7,16,7"/><CheckBox x:Name="R60" Content="1시간 전" Tag="60" Margin="0,7,16,7"/>
                     <CheckBox x:Name="R1440" Content="1일 전" Tag="1440" Margin="0,7,16,7"/>
                 </WrapPanel>
                 <WrapPanel>
-                    <TextBlock Text="직접 지정" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                    <TextBox x:Name="CustomReminderBox" Width="70"/>
-                    <ComboBox x:Name="CustomReminderUnit" Width="80" SelectedIndex="0" Margin="5,0">
-                        <ComboBoxItem Content="분" Tag="1"/><ComboBoxItem Content="시간" Tag="60"/><ComboBoxItem Content="일" Tag="1440"/>
-                    </ComboBox>
+                    <TextBlock Text="직접 지정" VerticalAlignment="Center" Margin="0,0,8,0"/><TextBox x:Name="CustomReminderBox" Width="70"/>
+                    <ComboBox x:Name="CustomReminderUnit" Width="80" SelectedIndex="0" Margin="5,0"><ComboBoxItem Content="분" Tag="1"/><ComboBoxItem Content="시간" Tag="60"/><ComboBoxItem Content="일" Tag="1440"/></ComboBox>
                     <TextBlock Text="전" VerticalAlignment="Center"/>
                 </WrapPanel>
             </StackPanel>
-
             <TextBlock Grid.Row="5" Text="반복 알림" VerticalAlignment="Center" Margin="0,8"/>
             <WrapPanel Grid.Row="5" Grid.Column="1" Margin="0,5">
-                <ComboBox x:Name="RepeatInterval" Width="130" SelectedIndex="0">
-                    <ComboBoxItem Content="반복 없음" Tag="0"/><ComboBoxItem Content="5분 간격" Tag="5"/>
-                    <ComboBoxItem Content="10분 간격" Tag="10"/><ComboBoxItem Content="30분 간격" Tag="30"/>
-                </ComboBox>
-                <ComboBox x:Name="RepeatCount" Width="130" SelectedIndex="0" Margin="8,0">
-                    <ComboBoxItem Content="1회" Tag="1"/><ComboBoxItem Content="2회" Tag="2"/><ComboBoxItem Content="3회" Tag="3"/>
-                    <ComboBoxItem Content="5회" Tag="5"/><ComboBoxItem Content="확인할 때까지" Tag="-1"/>
-                </ComboBox>
+                <ComboBox x:Name="RepeatInterval" Width="130" SelectedIndex="0"><ComboBoxItem Content="반복 없음" Tag="0"/><ComboBoxItem Content="5분 간격" Tag="5"/><ComboBoxItem Content="10분 간격" Tag="10"/><ComboBoxItem Content="30분 간격" Tag="30"/></ComboBox>
+                <ComboBox x:Name="RepeatCount" Width="130" SelectedIndex="0" Margin="8,0"><ComboBoxItem Content="1회" Tag="1"/><ComboBoxItem Content="2회" Tag="2"/><ComboBoxItem Content="3회" Tag="3"/><ComboBoxItem Content="5회" Tag="5"/><ComboBoxItem Content="확인할 때까지" Tag="-1"/></ComboBox>
             </WrapPanel>
-
             <TextBlock Grid.Row="6" Text="설명" VerticalAlignment="Top" Margin="0,10"/>
-            <TextBox Grid.Row="6" Grid.Column="1" x:Name="DescriptionBox" Margin="0,5" MinHeight="90" AcceptsReturn="True" TextWrapping="Wrap" MaxLength="2000"/>
-
-            <TextBlock Grid.Row="7" Text="파일 / 폴더 / 웹" VerticalAlignment="Center" Margin="0,8"/>
-            <Grid Grid.Row="7" Grid.Column="1" Margin="0,5">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                <TextBox x:Name="PathBox" ToolTip="파일·폴더 경로 또는 http/https 웹 주소"/>
-                <Button Grid.Column="1" Content="파일 선택" Click="ChooseFile_Click"/>
-                <Button Grid.Column="2" Content="폴더 선택" Click="ChooseFolder_Click"/>
-            </Grid>
-
+            <TextBox Grid.Row="6" Grid.Column="1" x:Name="DescriptionBox" Margin="0,5" MinHeight="80" AcceptsReturn="True" TextWrapping="Wrap" MaxLength="2000"/>
+            <TextBlock Grid.Row="7" Text="연결 대상" VerticalAlignment="Top" Margin="0,10"/>
+            <StackPanel Grid.Row="7" Grid.Column="1" Margin="0,5">
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="80"/><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <ComboBox x:Name="AttachmentKindBox" SelectedIndex="0"><ComboBoxItem Content="파일" Tag="0"/><ComboBoxItem Content="폴더" Tag="1"/><ComboBoxItem Content="웹 주소" Tag="2"/></ComboBox>
+                    <TextBox Grid.Column="1" x:Name="AttachmentNameBox" Margin="6,0" ToolTip="표시 이름 (선택)"/>
+                    <TextBox Grid.Column="2" x:Name="AttachmentTargetBox" ToolTip="파일·폴더 경로 또는 http/https 웹 주소"/>
+                </Grid>
+                <WrapPanel Margin="0,6,0,0">
+                    <Button Content="대상 추가" Click="AddAttachment_Click" Background="#1558A6" Foreground="White"/>
+                    <Button Content="파일 선택" Click="ChooseFile_Click"/><Button Content="폴더 선택" Click="ChooseFolder_Click"/>
+                    <TextBlock Text="최대 20개" Foreground="#666" VerticalAlignment="Center" Margin="8,0"/>
+                </WrapPanel>
+                <ListBox x:Name="AttachmentsList" Margin="0,8,0,0" MinHeight="95" MaxHeight="180">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="4">
+                                <Grid.ColumnDefinitions><ColumnDefinition Width="55"/><ColumnDefinition Width="125"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding DisplayKind}" Foreground="#1558A6" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Text="{Binding DisplayName}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="{Binding Target}" Foreground="#666" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                <Button Grid.Column="3" Content="삭제" Click="RemoveAttachment_Click"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
             <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                <Button Content="취소" Width="90" IsCancel="True"/>
-                <Button Content="저장" Width="100" IsDefault="True" Click="Save_Click" Background="#1558A6" Foreground="White" FontWeight="Bold"/>
+                <Button Content="취소" Width="90" IsCancel="True"/><Button Content="저장" Width="100" IsDefault="True" Click="Save_Click" Background="#1558A6" Foreground="White" FontWeight="Bold"/>
             </StackPanel>
         </Grid>
     </ScrollViewer>

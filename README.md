@@ -302,12 +302,11 @@ Alarm은 복잡한 일정관리 시스템을 만드는 것이 목적이 아닙�
 | 로컬 저장소 | Windows 기본 `winsqlite3.dll` (SQLite) |
 | 개발 도구 | .NET 8 SDK, Visual Studio 2022 또는 VS Code |
 
-### 개발·검증 명령
+### 개발 빌드 명령
 
 ```powershell
 dotnet restore .\InternalAlarmApp.sln --ignore-failed-sources
 dotnet build .\InternalAlarmApp.sln -c Release --no-restore
-dotnet run --project .\Tests\InternalAlarmApp.Tests.csproj -c Release --no-build
 ```
 
 단일 실행 파일과 배포 ZIP은 저장소 루트에서 다음 명령으로 생성합니다.

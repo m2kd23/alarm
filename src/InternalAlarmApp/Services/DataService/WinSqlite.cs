@@ -29,6 +29,12 @@ internal sealed class WinSqliteConnection : IDisposable
         if (rc != Done && rc != Row) throw Error("SQLite 명령 실행 오류", rc);
     }
 
+    public int ExecuteAffected(string sql, params object?[] values)
+    {
+        Execute(sql, values);
+        return Native.sqlite3_changes(_db);
+    }
+
     public List<T> Query<T>(string sql, Func<SqliteRow, T> map, params object?[] values)
     {
         using var command = Prepare(sql, values);
@@ -126,6 +132,7 @@ internal sealed class WinSqliteConnection : IDisposable
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] internal static extern int sqlite3_column_bytes(IntPtr stmt, int col);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] internal static extern int sqlite3_column_type(IntPtr stmt, int col);
         [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] internal static extern long sqlite3_last_insert_rowid(IntPtr db);
+        [DllImport(Dll, CallingConvention = CallingConvention.Cdecl)] internal static extern int sqlite3_changes(IntPtr db);
     }
 }
 

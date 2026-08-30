@@ -5,8 +5,10 @@ using InternalAlarmApp.DateTimeParser;
 using InternalAlarmApp.Models;
 using InternalAlarmApp.Services.AlarmService;
 using InternalAlarmApp.Services.DataService;
+using InternalAlarmApp.Services.CsvService;
 using InternalAlarmApp.Services.FileOpenService;
 using InternalAlarmApp.ViewModels;
+using Microsoft.Win32;
 
 namespace InternalAlarmApp.Views;
 
@@ -16,6 +18,7 @@ public partial class MainWindow : Window
     private readonly AlarmScheduler _scheduler;
     private readonly KoreanDateTimeParser _parser;
     private readonly FileOpenService _fileOpen;
+    private readonly AlarmCsvService _csv = new();
     private readonly MainViewModel _viewModel;
     private bool _forceClose;
 
@@ -55,14 +58,38 @@ public partial class MainWindow : Window
         return null;
     }
     private void New_Click(object sender, RoutedEventArgs e) => OpenEditor();
+    private void ImportCsv_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new OpenFileDialog { Title = "업무 목록 CSV 선택", Filter = "CSV UTF-8 파일|*.csv", CheckFileExists = true };
+        if (dialog.ShowDialog(this) != true) return;
+        var preview = _csv.Preview(dialog.FileName, _repository.GetAll());
+        var window = new CsvImportPreviewWindow(preview, _repository, _scheduler) { Owner = this };
+        if (window.ShowDialog() == true) _viewModel.Reload();
+    }
+    private void ExportCsv_Click(object sender, RoutedEventArgs e)
+    {
+        var window = new CsvExportWindow(_repository, _csv) { Owner = this };
+        window.ShowDialog();
+    }
     private void Edit_Click(object sender, RoutedEventArgs e) { var alarm = SelectedOrWarn(); if (alarm != null) OpenEditor(alarm: alarm); }
     private void Grid_DoubleClick(object sender, MouseButtonEventArgs e) { if (_viewModel.SelectedAlarm != null) OpenEditor(alarm: _viewModel.SelectedAlarm); }
     private void Refresh_Click(object sender, RoutedEventArgs e) => _viewModel.Reload();
     private void Settings_Click(object sender, RoutedEventArgs e) => ((App)Application.Current).ShowSettings(this);
-    private void Open_Click(object sender, RoutedEventArgs e)
+    private async void Open_Click(object sender, RoutedEventArgs e)
     {
         var alarm = SelectedOrWarn(); if (alarm == null) return;
-        if (!_fileOpen.Open(alarm.FilePath, out var error)) MessageBox.Show(this, error, "열기", MessageBoxButton.OK, MessageBoxImage.Information);
+        if (alarm.Attachments.Count == 0)
+        {
+            MessageBox.Show(this, "연결된 파일, 폴더 또는 웹 주소가 없습니다.", "연결 대상", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        var result = await _fileOpen.OpenAllAsync(alarm.Attachments);
+        if (result.Failures.Count > 0 || result.LimitReached)
+        {
+            var messages = result.Failures.ToList();
+            if (result.LimitReached) messages.Add($"한 번에 열 수 있는 연결 대상은 {FileOpenService.MaximumAttachments}개입니다.");
+            MessageBox.Show(this, string.Join(Environment.NewLine, messages), "연결 대상 열기", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
     }
     private void Complete_Click(object sender, RoutedEventArgs e)
     {

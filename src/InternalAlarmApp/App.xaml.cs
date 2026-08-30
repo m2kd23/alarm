@@ -19,6 +19,7 @@ public partial class App : Application
     private Mutex? _singleInstance;
     private AlarmRepository? _repository;
     private AlarmScheduler? _scheduler;
+    private DailyRoutineService? _dailyRoutine;
     private GlobalKeySequenceService? _hotKey;
     private TrayService? _tray;
     private MainWindow? _mainWindow;
@@ -28,6 +29,8 @@ public partial class App : Application
     private readonly FileOpenService _fileOpen = new();
     private readonly ActiveContextService _activeContext = new();
     private readonly Dictionary<long, NotificationPopup> _openPopups = [];
+    private MorningBriefingWindow? _morningBriefingWindow;
+    private DailyWrapUpWindow? _dailyWrapUpWindow;
     private bool _capturing;
     private bool _exiting;
 
@@ -50,6 +53,9 @@ public partial class App : Application
             _repository.Initialize();
             _scheduler = new AlarmScheduler(_repository);
             _scheduler.AlarmDue += Scheduler_AlarmDue;
+            _dailyRoutine = new DailyRoutineService(_settings);
+            _dailyRoutine.MorningBriefingDue += (_, _) => Dispatcher.BeginInvoke(ShowMorningBriefing);
+            _dailyRoutine.DailyWrapUpDue += (_, _) => Dispatcher.BeginInvoke(ShowDailyWrapUp);
             _tray = new TrayService();
             _mainWindow = new MainWindow(_repository, _scheduler, _parser, _fileOpen);
             MainWindow = _mainWindow;
@@ -58,6 +64,7 @@ public partial class App : Application
             _hotKey.Triggered += (_, _) => Dispatcher.BeginInvoke(CaptureSelectionAndOpenEditor);
             _hotKey.Start();
             _scheduler.Start();
+            _dailyRoutine.Start();
             Logger.Info("프로그램 시작");
             _mainWindow.ShowAndActivate();
         }
@@ -109,6 +116,8 @@ public partial class App : Application
         _tray.NewAlarmRequested += (_, _) => Dispatcher.Invoke(() => _mainWindow.OpenEditor());
         _tray.ListRequested += (_, _) => Dispatcher.Invoke(() => _mainWindow.ShowAndActivate());
         _tray.TodayRequested += (_, _) => Dispatcher.Invoke(() => _mainWindow.ShowAndActivate("오늘 일정"));
+        _tray.MorningBriefingRequested += (_, _) => Dispatcher.Invoke(ShowMorningBriefing);
+        _tray.DailyWrapUpRequested += (_, _) => Dispatcher.Invoke(ShowDailyWrapUp);
         _tray.SettingsRequested += (_, _) => Dispatcher.Invoke(() => ShowSettings(_mainWindow));
         _tray.ExitRequested += (_, _) => Dispatcher.Invoke(ExitApplication);
     }
@@ -122,6 +131,7 @@ public partial class App : Application
             StartupService.SetEnabled(_settings.RunAtStartup);
             _settings.Save(AppPaths.Settings);
             _hotKey?.Update(_settings.HotKeyVirtualKey, _settings.DoublePressMilliseconds, _settings.HotKeyModifiers, _settings.HotKeyPressCount);
+            _dailyRoutine?.Update(_settings);
         }
         catch (Exception ex)
         {
@@ -135,14 +145,46 @@ public partial class App : Application
         if (_exiting) return;
         _exiting = true;
         Logger.Info("프로그램 종료");
-        _scheduler?.Dispose(); _hotKey?.Dispose(); _tray?.Dispose();
+        _scheduler?.Dispose(); _dailyRoutine?.Dispose(); _hotKey?.Dispose(); _tray?.Dispose();
         _mainWindow?.ForceClose();
         Shutdown();
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
-        _scheduler?.Dispose(); _hotKey?.Dispose(); _tray?.Dispose(); _singleInstance?.Dispose();
+        _scheduler?.Dispose(); _dailyRoutine?.Dispose(); _hotKey?.Dispose(); _tray?.Dispose(); _singleInstance?.Dispose();
         base.OnExit(e);
+    }
+
+    private void ShowMorningBriefing()
+    {
+        if (_repository is null) return;
+        if (_morningBriefingWindow is { IsVisible: true }) { _morningBriefingWindow.Activate(); return; }
+        var window = new MorningBriefingWindow(_repository.GetForDate(DateTime.Today), _fileOpen);
+        _morningBriefingWindow = window;
+        window.ShowListRequested += (_, _) => _mainWindow?.ShowAndActivate("오늘 일정");
+        window.Closed += (_, _) => { if (ReferenceEquals(_morningBriefingWindow, window)) _morningBriefingWindow = null; };
+        window.Show();
+        window.Activate();
+    }
+
+    private void ShowDailyWrapUp()
+    {
+        if (_repository is null || _scheduler is null) return;
+        if (_dailyWrapUpWindow is { IsVisible: true }) { _dailyWrapUpWindow.Activate(); return; }
+        var window = new DailyWrapUpWindow(_repository, _scheduler, _fileOpen);
+        _dailyWrapUpWindow = window;
+        window.ShowListRequested += (_, _) => _mainWindow?.ShowAndActivate("오늘 일정");
+        window.AlarmsPostponed += CloseAlarmPopups;
+        window.Closed += (_, _) => { if (ReferenceEquals(_dailyWrapUpWindow, window)) _dailyWrapUpWindow = null; };
+        window.Show();
+        window.Activate();
+    }
+
+    private void CloseAlarmPopups(IReadOnlyList<long> alarmIds)
+    {
+        foreach (var id in alarmIds)
+            if (_openPopups.Remove(id, out var popup)) popup.Close();
+        _mainWindow?.ShowAndActivate();
     }
 }

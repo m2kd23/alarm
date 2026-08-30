@@ -40,18 +40,10 @@ public sealed class AlarmScheduler : IDisposable
         try
         {
             var now = DateTime.Now;
-            var due = _repository.GetDue(now.AddSeconds(1));
-            foreach (var group in due.GroupBy(x => x.AlarmId))
+            var due = _repository.ClaimDue(now.AddSeconds(1));
+            foreach (var item in due)
             {
-                var alarm = _repository.Get(group.Key);
-                foreach (var item in group) _repository.MarkTriggered(item, now);
-                if (alarm is null || alarm.Completed || alarm.Status == AlarmStatus.Cancelled) continue;
-
-                var reminder = group.OrderByDescending(x => x.ScheduledAt).First();
-                AlarmDue?.Invoke(this, new AlarmDueEventArgs(alarm, reminder));
-                if (reminder.RepeatMinutes > 0 && (reminder.RepeatCount < 0 || reminder.TriggerCount < reminder.RepeatCount))
-                    _repository.AddFollowUp(alarm.Id, now.AddMinutes(reminder.RepeatMinutes), ReminderKind.Repeat,
-                        reminder.RepeatMinutes, reminder.RepeatCount, reminder.TriggerCount + 1);
+                AlarmDue?.Invoke(this, new AlarmDueEventArgs(item.Alarm, item.Reminder));
             }
         }
         catch (Exception ex) { Logger.Error("알림 스케줄러", ex); }
@@ -64,8 +56,7 @@ public sealed class AlarmScheduler : IDisposable
 
     public void Snooze(long alarmId, int minutes)
     {
-        _repository.AddFollowUp(alarmId, DateTime.Now.AddMinutes(minutes), ReminderKind.Snooze);
-        Reschedule();
+        if (_repository.Snooze(alarmId, minutes)) Reschedule();
     }
 
     public void Dispose() { lock (_gate) { _timer?.Dispose(); _timer = null; } }

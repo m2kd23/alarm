@@ -8,7 +8,10 @@
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
         <DockPanel Grid.Row="0" Margin="0,0,0,15">
             <TextBlock Text="내 업무 알림" FontSize="26" FontWeight="Bold" Foreground="#1558A6" DockPanel.Dock="Left"/>
-            <Button Content="＋ 새 알림" HorizontalAlignment="Right" Click="New_Click" Background="#1558A6" Foreground="White" FontWeight="Bold"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="CSV 가져오기" Click="ImportCsv_Click"/><Button Content="CSV 내보내기" Click="ExportCsv_Click"/>
+                <Button Content="＋ 새 알림" Click="New_Click" Background="#1558A6" Foreground="White" FontWeight="Bold"/>
+            </StackPanel>
         </DockPanel>
         <Grid Grid.Row="1" Margin="0,0,0,12">
             <Grid.ColumnDefinitions><ColumnDefinition Width="170"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
@@ -24,13 +27,13 @@
                 <DataGridTextColumn Header="일시" Binding="{Binding DisplayDateTime}" Width="145" SortMemberPath="AlarmDateTime"/>
                 <DataGridTextColumn Header="제목" Binding="{Binding Title}" Width="*" SortMemberPath="Title"/>
                 <DataGridTextColumn Header="사전 알림" Binding="{Binding ReminderSummary}" Width="145"/>
-                <DataGridTextColumn Header="파일/폴더" Binding="{Binding FileName}" Width="150"/>
+                <DataGridTextColumn Header="연결 대상" Binding="{Binding FileName}" Width="150"/>
             </DataGrid.Columns>
         </DataGrid>
         <DockPanel Grid.Row="3" Margin="0,12,0,0">
             <TextBlock Text="창을 닫아도 시스템 트레이에서 계속 실행됩니다." Foreground="#666" VerticalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="열기" Click="Open_Click"/><Button Content="수정" Click="Edit_Click"/>
+                <Button Content="연결 열기" Click="Open_Click"/><Button Content="수정" Click="Edit_Click"/>
                 <Button Content="완료" Click="Complete_Click"/><Button Content="삭제" Click="Delete_Click"/>
                 <Button Content="설정" Click="Settings_Click"/>
             </StackPanel>

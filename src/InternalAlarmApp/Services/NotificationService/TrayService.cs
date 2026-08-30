@@ -9,6 +9,8 @@ public sealed class TrayService : IDisposable
     public event EventHandler? NewAlarmRequested;
     public event EventHandler? ListRequested;
     public event EventHandler? TodayRequested;
+    public event EventHandler? MorningBriefingRequested;
+    public event EventHandler? DailyWrapUpRequested;
     public event EventHandler? SettingsRequested;
     public event EventHandler? ExitRequested;
 
@@ -18,6 +20,8 @@ public sealed class TrayService : IDisposable
         menu.Items.Add("새 알림 등록", null, (_, _) => NewAlarmRequested?.Invoke(this, EventArgs.Empty));
         menu.Items.Add("알림 목록", null, (_, _) => ListRequested?.Invoke(this, EventArgs.Empty));
         menu.Items.Add("오늘 일정", null, (_, _) => TodayRequested?.Invoke(this, EventArgs.Empty));
+        menu.Items.Add("모닝 브리핑", null, (_, _) => MorningBriefingRequested?.Invoke(this, EventArgs.Empty));
+        menu.Items.Add("데일리 랩업", null, (_, _) => DailyWrapUpRequested?.Invoke(this, EventArgs.Empty));
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add("설정", null, (_, _) => SettingsRequested?.Invoke(this, EventArgs.Empty));
         menu.Items.Add("종료", null, (_, _) => ExitRequested?.Invoke(this, EventArgs.Empty));

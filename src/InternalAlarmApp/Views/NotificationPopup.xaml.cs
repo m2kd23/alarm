@@ -23,7 +23,8 @@ public partial class NotificationPopup : Window
         TimeText.Text = $"{alarm.AlarmDateTime:yyyy-MM-dd HH:mm} 일정입니다.";
         DescriptionText.Text = alarm.Description;
         DescriptionText.Visibility = string.IsNullOrWhiteSpace(alarm.Description) ? Visibility.Collapsed : Visibility.Visible;
-        OpenButton.Visibility = string.IsNullOrWhiteSpace(alarm.FilePath) ? Visibility.Collapsed : Visibility.Visible;
+        OpenButton.Visibility = alarm.Attachments.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
+        if (alarm.Attachments.Count > 0) OpenButton.Content = $"연결 대상 {alarm.Attachments.Count}개 열기";
         Loaded += (_, _) =>
         {
             Left = SystemParameters.WorkArea.Right - ActualWidth - 14;
@@ -52,8 +53,14 @@ public partial class NotificationPopup : Window
         Close();
     }
 
-    private void Open_Click(object sender, RoutedEventArgs e)
+    private async void Open_Click(object sender, RoutedEventArgs e)
     {
-        if (!_fileOpen.Open(_alarm.FilePath, out var error)) MessageBox.Show(this, error, "열기 오류", MessageBoxButton.OK, MessageBoxImage.Warning);
+        var result = await _fileOpen.OpenAllAsync(_alarm.Attachments);
+        if (result.Failures.Count > 0 || result.LimitReached)
+        {
+            var messages = result.Failures.ToList();
+            if (result.LimitReached) messages.Add($"한 번에 열 수 있는 연결 대상은 {FileOpenService.MaximumAttachments}개입니다.");
+            MessageBox.Show(this, string.Join(Environment.NewLine, messages), "열기 오류", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
     }
 }

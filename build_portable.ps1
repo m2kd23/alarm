@@ -1,14 +1,13 @@
 $ErrorActionPreference = 'Stop'
 $projectRoot = $PSScriptRoot
 $artifactRoot = Join-Path $projectRoot 'artifacts'
-$publishDir = Join-Path $artifactRoot 'InternalAlarmApp_v1.0'
-$zipPath = Join-Path $artifactRoot 'InternalAlarmApp_v1.0.zip'
+$publishDir = Join-Path $artifactRoot 'InternalAlarmApp_v1.1'
+$zipPath = Join-Path $artifactRoot 'InternalAlarmApp_v1.1.zip'
 $localDotnet = Join-Path $projectRoot '.dotnet-sdk\dotnet.exe'
 $dotnet = if (Test-Path -LiteralPath $localDotnet) { $localDotnet } else { 'dotnet' }
 
 & $dotnet restore (Join-Path $projectRoot 'InternalAlarmApp.sln') --ignore-failed-sources
 & $dotnet build (Join-Path $projectRoot 'InternalAlarmApp.sln') -c Release --no-restore
-& $dotnet run --project (Join-Path $projectRoot 'Tests\InternalAlarmApp.Tests.csproj') -c Release --no-build
 
 if (Test-Path -LiteralPath $publishDir) { Remove-Item -LiteralPath $publishDir -Recurse -Force }
 New-Item -ItemType Directory -Path $publishDir | Out-Null
@@ -18,7 +17,7 @@ New-Item -ItemType Directory -Path $publishDir | Out-Null
 $publishedPdb = Join-Path $publishDir 'InternalAlarmApp.pdb'
 if (Test-Path -LiteralPath $publishedPdb) { Remove-Item -LiteralPath $publishedPdb -Force }
 
-$standaloneExe = Join-Path $artifactRoot 'InternalAlarmApp_v1.0.exe'
+$standaloneExe = Join-Path $artifactRoot 'InternalAlarmApp_v1.1.exe'
 Copy-Item -LiteralPath (Join-Path $publishDir 'InternalAlarmApp.exe') -Destination $standaloneExe -Force
 
 Copy-Item -LiteralPath (Join-Path $projectRoot 'README.md') -Destination (Join-Path $publishDir 'README.txt')

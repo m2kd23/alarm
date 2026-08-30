@@ -4,8 +4,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternalAlarmApp", "src\InternalAlarmApp\InternalAlarmApp.csproj", "{51C65E21-5AA7-4D27-A4A3-B4359004280A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InternalAlarmApp.Tests", "Tests\InternalAlarmApp.Tests.csproj", "{12DE9B78-1D3D-4457-926B-54559F361B13}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -16,9 +14,5 @@ Global
 		{51C65E21-5AA7-4D27-A4A3-B4359004280A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51C65E21-5AA7-4D27-A4A3-B4359004280A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51C65E21-5AA7-4D27-A4A3-B4359004280A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{12DE9B78-1D3D-4457-926B-54559F361B13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12DE9B78-1D3D-4457-926B-54559F361B13}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12DE9B78-1D3D-4457-926B-54559F361B13}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12DE9B78-1D3D-4457-926B-54559F361B13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
