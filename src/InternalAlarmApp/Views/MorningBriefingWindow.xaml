@@ -21,7 +21,7 @@
                                     <TextBlock Grid.Row="2" Text="{Binding Description}" Foreground="#555" TextWrapping="Wrap" Margin="0,7,0,0"/>
                                     <DockPanel Grid.Row="3" Margin="0,10,0,0">
                                         <TextBlock Text="{Binding AttachmentSummary}" Foreground="#666" VerticalAlignment="Center"/>
-                                        <Button Content="연결 대상 열기" Click="OpenAll_Click" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
+                                        <Button Content="관련 자료 열기" Click="OpenAll_Click" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
                                     </DockPanel>
                                 </Grid>
                             </Border>

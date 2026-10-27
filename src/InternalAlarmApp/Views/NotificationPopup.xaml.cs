@@ -24,7 +24,7 @@ public partial class NotificationPopup : Window
         DescriptionText.Text = alarm.Description;
         DescriptionText.Visibility = string.IsNullOrWhiteSpace(alarm.Description) ? Visibility.Collapsed : Visibility.Visible;
         OpenButton.Visibility = alarm.Attachments.Count == 0 ? Visibility.Collapsed : Visibility.Visible;
-        if (alarm.Attachments.Count > 0) OpenButton.Content = $"연결 대상 {alarm.Attachments.Count}개 열기";
+        if (alarm.Attachments.Count > 0) OpenButton.Content = $"관련 자료 {alarm.Attachments.Count}개 열기";
         Loaded += (_, _) =>
         {
             Left = SystemParameters.WorkArea.Right - ActualWidth - 14;
@@ -59,7 +59,7 @@ public partial class NotificationPopup : Window
         if (result.Failures.Count > 0 || result.LimitReached)
         {
             var messages = result.Failures.ToList();
-            if (result.LimitReached) messages.Add($"한 번에 열 수 있는 연결 대상은 {FileOpenService.MaximumAttachments}개입니다.");
+            if (result.LimitReached) messages.Add($"한 번에 열 수 있는 관련 자료는 {FileOpenService.MaximumAttachments}개입니다.");
             MessageBox.Show(this, string.Join(Environment.NewLine, messages), "열기 오류", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }

@@ -124,7 +124,7 @@ public sealed class AlarmCsvService
             if (target.Length == 0 || !TryParseKind(kindText, out var kind)) throw new FormatException($"연결{i} 대상·유형을 확인해 주세요.");
             var attachment = new AlarmAttachment { Kind = kind, Target = target, DisplayName = name };
             if (!TargetOpenService.IsValidForSaving(attachment, out var error)) throw new FormatException($"연결{i}: {error}");
-            if (!keys.Add(TargetOpenService.NormalizedKey(attachment))) throw new FormatException($"연결{i}: 같은 연결 대상이 중복되어 있습니다.");
+            if (!keys.Add(TargetOpenService.NormalizedKey(attachment))) throw new FormatException($"연결{i}: 같은 관련 자료가 중복되어 있습니다.");
             if (string.IsNullOrWhiteSpace(attachment.DisplayName)) attachment.DisplayName = TargetOpenService.GetDefaultDisplayName(attachment);
             alarm.Attachments.Add(attachment);
         }

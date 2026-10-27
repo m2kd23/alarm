@@ -13,6 +13,8 @@ public partial class CsvExportWindow : Window
     public CsvExportWindow(AlarmRepository repository, AlarmCsvService service)
     {
         InitializeComponent();
+        FromDateBox.Loaded += (_, _) => DatePickerAlignment.Center(FromDateBox);
+        ToDateBox.Loaded += (_, _) => DatePickerAlignment.Center(ToDateBox);
         _repository = repository; _service = service;
         var monday = DateTime.Today.AddDays(-((int)DateTime.Today.DayOfWeek + 6) % 7);
         FromDateBox.SelectedDate = monday;
@@ -25,7 +27,7 @@ public partial class CsvExportWindow : Window
         {
             MessageBox.Show(this, "올바른 시작·종료 날짜를 선택해 주세요.", "CSV 내보내기", MessageBoxButton.OK, MessageBoxImage.Information); return;
         }
-        var dialog = new SaveFileDialog { Title = "주간 업무 CSV 저장", Filter = "CSV UTF-8 파일|*.csv", FileName = $"업무목록_{FromDateBox.SelectedDate:yyyyMMdd}_{ToDateBox.SelectedDate:yyyyMMdd}.csv", AddExtension = true };
+        var dialog = new SaveFileDialog { Title = "선택한 기간 업무 CSV 저장", Filter = "CSV UTF-8 파일|*.csv", FileName = $"업무목록_{FromDateBox.SelectedDate:yyyyMMdd}_{ToDateBox.SelectedDate:yyyyMMdd}.csv", AddExtension = true };
         if (dialog.ShowDialog(this) != true) return;
         try
         {

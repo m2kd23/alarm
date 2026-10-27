@@ -22,6 +22,7 @@ public partial class AlarmEditorWindow : Window
     public AlarmEditorWindow(AlarmRepository repository, AlarmScheduler scheduler, KoreanDateTimeParser parser, string originalText = "", string initialTarget = "", string contextTitle = "", Alarm? existing = null)
     {
         InitializeComponent();
+        DateBox.Loaded += (_, _) => DatePickerAlignment.Center(DateBox);
         _repository = repository; _scheduler = scheduler;
         _alarm = existing ?? new Alarm();
         AttachmentsList.ItemsSource = _attachments;
@@ -78,12 +79,12 @@ public partial class AlarmEditorWindow : Window
         var expiredReminder = reminders.Distinct().OrderDescending().FirstOrDefault(x => when.AddMinutes(-x) <= DateTime.Now);
         if (expiredReminder > 0) { Warn($"{ReminderLabel(expiredReminder)} 사전 알림 시각이 이미 지났습니다. 해당 항목을 해제해 주세요.", R5); return; }
 
-        if (_attachments.Count > FileOpenService.MaximumAttachments) { Warn($"연결 대상은 최대 {FileOpenService.MaximumAttachments}개까지 등록할 수 있습니다.", AttachmentTargetBox); return; }
+        if (_attachments.Count > FileOpenService.MaximumAttachments) { Warn($"관련 자료는 최대 {FileOpenService.MaximumAttachments}개까지 등록할 수 있습니다.", AttachmentTargetBox); return; }
         var attachmentKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var attachment in _attachments)
         {
             if (!FileOpenService.IsValidForSaving(attachment, out var error)) { Warn(error, AttachmentTargetBox); return; }
-            if (!attachmentKeys.Add(FileOpenService.NormalizedKey(attachment))) { Warn("같은 연결 대상이 중복되어 있습니다.", AttachmentTargetBox); return; }
+            if (!attachmentKeys.Add(FileOpenService.NormalizedKey(attachment))) { Warn("같은 관련 자료가 중복되어 있습니다.", AttachmentTargetBox); return; }
         }
 
         _alarm.Title = TitleBox.Text.Trim(); _alarm.OriginalText = OriginalTextBox.Text.Trim(); _alarm.AlarmDateTime = when;
@@ -102,11 +103,11 @@ public partial class AlarmEditorWindow : Window
 
     private void AddAttachment_Click(object sender, RoutedEventArgs e)
     {
-        if (_attachments.Count >= FileOpenService.MaximumAttachments) { Warn($"연결 대상은 최대 {FileOpenService.MaximumAttachments}개까지 등록할 수 있습니다.", AttachmentTargetBox); return; }
+        if (_attachments.Count >= FileOpenService.MaximumAttachments) { Warn($"관련 자료는 최대 {FileOpenService.MaximumAttachments}개까지 등록할 수 있습니다.", AttachmentTargetBox); return; }
         var kind = (AttachmentKind)int.Parse(((ComboBoxItem)AttachmentKindBox.SelectedItem).Tag.ToString()!);
         var attachment = new AlarmAttachment { Kind = kind, Target = AttachmentTargetBox.Text.Trim(), DisplayName = AttachmentNameBox.Text.Trim() };
         if (!FileOpenService.IsValidForSaving(attachment, out var error)) { Warn(error, AttachmentTargetBox); return; }
-        if (_attachments.Any(x => string.Equals(FileOpenService.NormalizedKey(x), FileOpenService.NormalizedKey(attachment), StringComparison.OrdinalIgnoreCase))) { Warn("같은 연결 대상이 이미 추가되어 있습니다.", AttachmentTargetBox); return; }
+        if (_attachments.Any(x => string.Equals(FileOpenService.NormalizedKey(x), FileOpenService.NormalizedKey(attachment), StringComparison.OrdinalIgnoreCase))) { Warn("같은 관련 자료가 이미 추가되어 있습니다.", AttachmentTargetBox); return; }
         if (string.IsNullOrWhiteSpace(attachment.DisplayName)) attachment.DisplayName = FileOpenService.GetDefaultDisplayName(attachment);
         _attachments.Add(attachment);
         AttachmentNameBox.Clear(); AttachmentTargetBox.Clear(); AttachmentTargetBox.Focus();

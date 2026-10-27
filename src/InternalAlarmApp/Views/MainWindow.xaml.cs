@@ -80,15 +80,15 @@ public partial class MainWindow : Window
         var alarm = SelectedOrWarn(); if (alarm == null) return;
         if (alarm.Attachments.Count == 0)
         {
-            MessageBox.Show(this, "연결된 파일, 폴더 또는 웹 주소가 없습니다.", "연결 대상", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(this, "연결된 파일, 폴더 또는 웹 주소가 없습니다.", "관련 자료", MessageBoxButton.OK, MessageBoxImage.Information);
             return;
         }
         var result = await _fileOpen.OpenAllAsync(alarm.Attachments);
         if (result.Failures.Count > 0 || result.LimitReached)
         {
             var messages = result.Failures.ToList();
-            if (result.LimitReached) messages.Add($"한 번에 열 수 있는 연결 대상은 {FileOpenService.MaximumAttachments}개입니다.");
-            MessageBox.Show(this, string.Join(Environment.NewLine, messages), "연결 대상 열기", MessageBoxButton.OK, MessageBoxImage.Warning);
+            if (result.LimitReached) messages.Add($"한 번에 열 수 있는 관련 자료는 {FileOpenService.MaximumAttachments}개입니다.");
+            MessageBox.Show(this, string.Join(Environment.NewLine, messages), "관련 자료 열기", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
     private void Complete_Click(object sender, RoutedEventArgs e)

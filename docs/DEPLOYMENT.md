@@ -6,10 +6,10 @@
 
 ## 산출물 검증
 
-- `artifacts\InternalAlarmApp_v1.1\InternalAlarmApp.exe`
-- `artifacts\InternalAlarmApp_v1.1\README.txt`
-- `artifacts\InternalAlarmApp_v1.1\docs\*.md`
-- `artifacts\InternalAlarmApp_v1.1.zip`
+- `artifacts\InternalAlarmApp_v1.1.1\InternalAlarmApp.exe`
+- `artifacts\InternalAlarmApp_v1.1.1\README.txt`
+- `artifacts\InternalAlarmApp_v1.1.1\docs\*.md`
+- `artifacts\InternalAlarmApp_v1.1.1.zip`
 
 반입 전에 기관 승인 도구로 악성코드 검사와 SHA-256 해시 기록을 수행합니다. 시험용 Windows 10 및 Windows 11 PC에서 단축키 충돌, 알림 표시 정책, 한글/Office/PDF 선택 문장 복사, 화면 배율 100/150/200%를 확인하십시오.
 

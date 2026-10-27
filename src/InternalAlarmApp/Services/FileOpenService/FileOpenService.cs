@@ -20,7 +20,7 @@ public sealed class FileOpenService
     public static bool TryInferAttachment(string? target, out AlarmAttachment attachment, out string error)
     {
         attachment = new AlarmAttachment { Target = target?.Trim() ?? "" };
-        if (string.IsNullOrWhiteSpace(target)) { error = "연결 대상이 비어 있습니다."; return false; }
+        if (string.IsNullOrWhiteSpace(target)) { error = "관련 자료가 비어 있습니다."; return false; }
         if (ActiveContextService.IsSupportedWebAddress(target)) attachment.Kind = AttachmentKind.Web;
         else attachment.Kind = Directory.Exists(target) ? AttachmentKind.Folder : AttachmentKind.File;
         attachment.DisplayName = GetDefaultDisplayName(attachment);
@@ -31,7 +31,7 @@ public sealed class FileOpenService
     public static bool IsValidForSaving(AlarmAttachment? attachment, out string error)
     {
         error = "";
-        if (attachment == null || string.IsNullOrWhiteSpace(attachment.Target)) { error = "연결 대상이 비어 있습니다."; return false; }
+        if (attachment == null || string.IsNullOrWhiteSpace(attachment.Target)) { error = "관련 자료가 비어 있습니다."; return false; }
         var target = attachment.Target.Trim();
         switch (attachment.Kind)
         {
@@ -49,7 +49,7 @@ public sealed class FileOpenService
                 error = @"폴더는 드라이브 또는 \\서버\공유 경로로 입력해 주세요.";
                 return false;
             default:
-                error = "지원되지 않는 연결 대상 유형입니다.";
+                error = "지원되지 않는 관련 자료 유형입니다.";
                 return false;
         }
     }

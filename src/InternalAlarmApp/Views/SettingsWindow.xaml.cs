@@ -46,7 +46,7 @@ public partial class SettingsWindow : Window
         var wrapUpTime = new TimeSpan(17, 50, 0);
         if (WrapUpBox.IsChecked == true && !TryGetTime(WrapUpTimeBox.Text, out wrapUpTime))
         {
-            MessageBox.Show(this, "데일리 랩업 시각은 HH:mm 형식으로 입력해 주세요.", "입력 확인", MessageBoxButton.OK, MessageBoxImage.Information); return;
+            MessageBox.Show(this, "퇴근 브리핑 시각은 HH:mm 형식으로 입력해 주세요.", "입력 확인", MessageBoxButton.OK, MessageBoxImage.Information); return;
         }
         var item = (ComboBoxItem)HotKeyBox.SelectedItem;
         var values = item.Tag.ToString()!.Split('|');

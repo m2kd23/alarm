@@ -40,7 +40,7 @@ public partial class App : Application
         _singleInstance = new Mutex(true, @"Local\InternalAlarmApp.SingleInstance", out var created);
         if (!created)
         {
-            MessageBox.Show("내 업무 알림이 이미 실행 중입니다. 시스템 트레이를 확인해 주세요.", "내 업무 알림", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("업무비서가 이미 실행 중입니다. 시스템 트레이를 확인해 주세요.", "업무비서", MessageBoxButton.OK, MessageBoxImage.Information);
             Shutdown(); return;
         }
 

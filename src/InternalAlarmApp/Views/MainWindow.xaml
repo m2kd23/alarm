@@ -1,39 +1,61 @@
 <Window x:Class="InternalAlarmApp.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="내 업무 알림" Width="1000" Height="620" MinWidth="780" MinHeight="480"
+        Title="업무비서" Width="1000" Height="620" MinWidth="780" MinHeight="480"
         Icon="../app_icon.png"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="20">
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
         <DockPanel Grid.Row="0" Margin="0,0,0,15">
-            <TextBlock Text="내 업무 알림" FontSize="26" FontWeight="Bold" Foreground="#1558A6" DockPanel.Dock="Left"/>
+            <TextBlock Text="업무비서" FontSize="26" FontWeight="Bold" Foreground="#1558A6" DockPanel.Dock="Left"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="CSV 가져오기" Click="ImportCsv_Click"/><Button Content="CSV 내보내기" Click="ExportCsv_Click"/>
-                <Button Content="＋ 새 알림" Click="New_Click" Background="#1558A6" Foreground="White" FontWeight="Bold"/>
+                <Button Content="＋ 신규등록" Click="New_Click" Background="#1558A6" Foreground="White" FontWeight="Bold"/>
             </StackPanel>
         </DockPanel>
         <Grid Grid.Row="1" Margin="0,0,0,12">
             <Grid.ColumnDefinitions><ColumnDefinition Width="170"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-            <ComboBox ItemsSource="{Binding Filters}" SelectedItem="{Binding Filter}"/>
-            <TextBox Grid.Column="1" Margin="10,0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" ToolTip="제목 또는 설명 검색"/>
+            <ComboBox ItemsSource="{Binding Filters}" SelectedItem="{Binding Filter}" Height="27.333" MinHeight="27.333" Padding="6,1" VerticalAlignment="Center"/>
+            <TextBox Grid.Column="1" Margin="10,0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" ToolTip="제목 또는 설명 검색" Height="27.333" MinHeight="27.333" Padding="7,1" VerticalAlignment="Center"/>
             <Button Grid.Column="2" Content="새로 고침" Click="Refresh_Click"/>
         </Grid>
         <DataGrid Grid.Row="2" ItemsSource="{Binding VisibleAlarms}" SelectedItem="{Binding SelectedAlarm}"
-                  AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" GridLinesVisibility="Horizontal"
+                  AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single" GridLinesVisibility="None"
+                  BorderBrush="#D6E0EE" BorderThickness="0.133" SnapsToDevicePixels="False" UseLayoutRounding="False"
                   CanUserSortColumns="True" MouseDoubleClick="Grid_DoubleClick">
+            <DataGrid.Resources>
+                <Style x:Key="CenteredAlarmCellText" TargetType="TextBlock">
+                    <Setter Property="TextAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="0,4.666"/>
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="BorderBrush" Value="#D6E0EE"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,0.133"/>
+                    <Setter Property="SnapsToDevicePixels" Value="False"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                </Style>
+            </DataGrid.CellStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="상태" Binding="{Binding DisplayStatus}" Width="75" SortMemberPath="Status"/>
-                <DataGridTextColumn Header="일시" Binding="{Binding DisplayDateTime}" Width="145" SortMemberPath="AlarmDateTime"/>
-                <DataGridTextColumn Header="제목" Binding="{Binding Title}" Width="*" SortMemberPath="Title"/>
-                <DataGridTextColumn Header="사전 알림" Binding="{Binding ReminderSummary}" Width="145"/>
-                <DataGridTextColumn Header="연결 대상" Binding="{Binding FileName}" Width="150"/>
+                <DataGridTextColumn Header="상태" Binding="{Binding DisplayStatus}" Width="75" SortMemberPath="Status" ElementStyle="{StaticResource CenteredAlarmCellText}"/>
+                <DataGridTextColumn Header="일시" Binding="{Binding DisplayDateTime}" Width="145" SortMemberPath="AlarmDateTime" ElementStyle="{StaticResource CenteredAlarmCellText}"/>
+                <DataGridTextColumn Header="제목" Binding="{Binding Title}" Width="*" SortMemberPath="Title" ElementStyle="{StaticResource CenteredAlarmCellText}"/>
+                <DataGridTextColumn Header="사전 알림" Binding="{Binding ReminderSummary}" Width="145" ElementStyle="{StaticResource CenteredAlarmCellText}"/>
+                <DataGridTextColumn Header="관련 자료" Binding="{Binding FileName}" Width="150" ElementStyle="{StaticResource CenteredAlarmCellText}"/>
             </DataGrid.Columns>
         </DataGrid>
         <DockPanel Grid.Row="3" Margin="0,12,0,0">
             <TextBlock Text="창을 닫아도 시스템 트레이에서 계속 실행됩니다." Foreground="#666" VerticalAlignment="Center"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="연결 열기" Click="Open_Click"/><Button Content="수정" Click="Edit_Click"/>
+                <Button Content="관련 자료 열기" Click="Open_Click"/><Button Content="수정" Click="Edit_Click"/>
                 <Button Content="완료" Click="Complete_Click"/><Button Content="삭제" Click="Delete_Click"/>
                 <Button Content="설정" Click="Settings_Click"/>
             </StackPanel>
